@@ -8,6 +8,7 @@ import throttle from 'lodash/throttle';
 import each from 'lodash/each';
 import map from 'lodash/map';
 import compact from 'lodash/compact';
+import findKey from 'lodash/findKey';
 
 const Picker = React.createClass({
     propTypes: {
@@ -33,13 +34,18 @@ const Picker = React.createClass({
           aliases_ascii: React.PropTypes.array,
           keywords: React.PropTypes.array
         })
-      )
+      ),
+      recentlyUsedShortnames: React.PropTypes.arrayOf(React.PropTypes.string)
     },
 
     getDefaultProps: function() {
       return {
         search: '',
         categories: {
+          recentlyUsed: {
+            title: 'Recently used',
+            emoji: 'star'
+          },
           people: {
             title: 'People',
             emoji: 'smile'
@@ -73,7 +79,8 @@ const Picker = React.createClass({
             emoji: 'flag_gb'
           }
         },
-        strategy: strategy
+        strategy,
+        recentlyUsedShortnames: []
       }
     },
 
@@ -155,13 +162,18 @@ const Picker = React.createClass({
         }
       }
 
+      emojis.recentlyUsed = this.props.recentlyUsedShortnames.reduce((ret, shortname) => {
+        const key = findKey(strategy, d => d.shortname === shortname);
+        return { ...ret, [key]: [strategy[key]] };
+      }, {});
+
       return emojis;
     },
 
     updateActiveCategory: throttle(function() {
       const scrollTop = this.refs.grandlist.scrollTop;
       const padding = 10;
-      let selected = 'people';
+      let selected = this.hasRecentlyUsed() ? 'recentlyUsed' : 'people';
 
       if (this.state.category){
         selected = this.state.category;
@@ -187,8 +199,10 @@ const Picker = React.createClass({
     renderCategories: function() {
       const headers = [];
       const jumpToCategory = this.jumpToCategory;
+      const { recentlyUsed, ...c } = this.props.categories;
+      const categories = this.hasRecentlyUsed() ? { recentlyUsed, ...c  } : c;
 
-      each(this.props.categories, (details, key) => {
+      each(categories, (details, key) => {
         headers.push(<li key={key} className={this.state.category === key ? "active" : ""}>
           <Emoji
             id={key}
@@ -287,6 +301,10 @@ const Picker = React.createClass({
       if (e.target.id === "flags") {
         this.refs[this.state.category].children[0].focus();
       }
+    },
+
+    hasRecentlyUsed: function() {
+      return !!this.props.recentlyUsedShortnames.length;
     },
 
     render: function() {
