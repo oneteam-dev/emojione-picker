@@ -5,6 +5,7 @@ import store from "store";
 import each from "lodash/each";
 import map from "lodash/map";
 import omit from "lodash/omit";
+import findKey from "lodash/findKey";
 import strategy from "emojione/emoji.json";
 import Emoji from "./emoji";
 import Categories from "./categories";
@@ -23,13 +24,15 @@ export default class Picker extends Component {
     searchPlaceholder: PropTypes.string,
     className: PropTypes.string,
     onChange: PropTypes.func.isRequired,
-    categories: PropTypes.object
+    categories: PropTypes.object,
+    recentlyUsedShortnames: PropTypes.arrayOf(PropTypes.string)
   };
 
   static defaultProps = {
     search: "",
     searchPlaceholder: "Search…",
-    categories: defaultCategories
+    categories: defaultCategories,
+    recentlyUsedShortnames: []
   };
 
   state = {
@@ -44,7 +47,7 @@ export default class Picker extends Component {
     each(this.props.emojione, (value, key) => {
       emojione[key] = value;
     });
-    this.setState({ emojis: createEmojisFromStrategy(strategy) });
+    this.setState({ emojis: this._createEmojisFromStrategy() });
   }
 
   componentDidMount() {
@@ -146,6 +149,19 @@ export default class Picker extends Component {
 
   _updateSearchTerm = () => {
     this.setState({ term: this.search.value });
+  };
+
+  _createEmojisFromStrategy = () => {
+    return {
+      recentlyUsed: this.props.recentlyUsedShortnames.reduce(
+        (ret, shortname) => {
+          const key = findKey(strategy, d => d.shortname === shortname);
+          return { ...ret, [key]: [strategy[key]] };
+        },
+        {}
+      ),
+      ...createEmojisFromStrategy(strategy)
+    };
   };
 
   render() {
