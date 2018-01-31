@@ -11,13 +11,14 @@ little something like this, but is easily customized:
 
 ## Installation
 
-`npm i emojione-picker --save`
+Install with your favorite package manager:
 
-This component has a peer dependency of `react-addons-shallow-compare` in
-addition to react itself. You should also install this if it is not included in
-your project:
-
-`npm i react-addons-shallow-compare --save`
+```
+npm i emojione-picker --save
+```
+```
+yarn add emojione-picker
+```
 
 
 ### Webpack
@@ -38,8 +39,8 @@ loaders: [
 
 ## Usage
 
-The npm module includes a pre-transpiled version of the picker so you don't need
-to run it through your JSX pipeline. Simply require the module like any other.
+The module includes a transpiled version of the picker so you don't need
+to run it through a JSX pipeline. Simply require the module like any other.
 
 ```javascript
 var EmojiPicker = require('emojione-picker');
@@ -74,12 +75,12 @@ input within the picker:
 ### Customize Categories
 
 You can easily customize the category icons by passing in alternatives to the
-component constructor. The emoji strings come from the shortname value in strategy.js
+component constructor. The emoji strings come from the shortname value in `strategy.js`.
 
 ```javascript
 var categories = {
   people: {
-    title:'People',
+    title: 'People',
     emoji: 'smile'
   },
   nature: {
@@ -110,12 +111,26 @@ var settings = {
 <EmojiPicker categories={categories} emojione={settings} />
 ```
 
+### Content Security Policy
+
+The picker uses _react-virtualized_, which creates an inlined style. Give the
+picker a nonce and set `Content-Security-Policy` field in HTTP header
+accordingly if your CSP requires this.
+
+```javascript
+<EmojiPicker nonce={NONCE_GENERATED_WHEN_TRANSMITTING} />
+```
+
+```
+Content-Security-Policy: style-src: 'self' 'nonce-NONCE_GENERATED_WHEN_TRANSMITTING'
+```
+
 
 ## Development
 
 ```
-npm install
-npm start
+yarn install
+yarn start
 ```
 
 Open `http://localhost:8080/examples` in a browser to see a preview of the picker.

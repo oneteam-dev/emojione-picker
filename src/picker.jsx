@@ -20,10 +20,7 @@ export default class Picker extends Component {
       sprites: PropTypes.bool,
       imagePathSVGSprites: PropTypes.string
     }),
-    search: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.string
-    ]),
+    search: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     searchPlaceholder: PropTypes.string,
     className: PropTypes.string,
     onChange: PropTypes.func.isRequired,
@@ -100,6 +97,7 @@ export default class Picker extends Component {
     return (
       <div className="emoji-categories-wrapper">
         <Categories
+          nonce={this.props.nonce}
           ref={this._setCategoriesRef}
           rows={rows}
           modifier={this.state.modifier}
