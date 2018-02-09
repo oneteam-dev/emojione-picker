@@ -29,7 +29,7 @@
     "dialog"
   ],
   "dependencies": {
-    "emojione": "^2.2.6",
+    "emojione": "^2.2.7",
     "escape-string-regexp": "^1.0.5",
     "lodash": "^4.15.0",
     "prop-types": "^15.5.6",
