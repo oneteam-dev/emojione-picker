@@ -155,8 +155,10 @@ export default class Picker extends Component {
     return {
       recentlyUsed: this.props.recentlyUsedShortnames.reduce(
         (ret, shortname) => {
-          const key = findKey(strategy, d => d.shortname === shortname);
-          return { ...ret, [key]: [strategy[key]] };
+          const key = findKey(strategy, d => {
+            return d.shortname === shortname || d.aliases.includes(shortname);
+          });
+          return key ? { ...ret, [key]: [strategy[key]] } : ret;
         },
         {}
       ),
